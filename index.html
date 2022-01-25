@@ -71,6 +71,7 @@
             let savedTail = [];
             let savedvelocityX = 0;
             let savedvelocityY = 0;
+            let saves = 0;
 
             function gameLoop() {
                 if (gameState == 1){
@@ -190,15 +191,21 @@
                         break; 
                     case 's':
                         saveGame();
+                        saves++;
                         break;
                     case 'S':
                         saveGame();
+                        saves++;
                         break;
                     case 'l':
-                        loadGame();
+                        if (saves != 0){
+                            loadGame();
+                        }                
                         break;
                     case 'L':
-                        loadGame();
+                        if (saves != 0){
+                            loadGame();
+                        }   
                         break;
                     default:
                         if (!gameState) {

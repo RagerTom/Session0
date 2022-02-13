@@ -64,13 +64,13 @@
             let gameState = 1; //0-game over, 1-runnig, 2-paused
 
             //saved values
-            let savedScore = 0;
+            /*let savedScore = 0;
             let savedSnakeLenght = 0;
             let savedSnakePosX = 0;
             let savedSnakePosY = 0;
             let savedTail = [];
             let savedvelocityX = 0;
-            let savedvelocityY = 0;
+            let savedvelocityY = 0;*/
             let saves = 0;
 
             function gameLoop() {
@@ -191,21 +191,15 @@
                         break; 
                     case 's':
                         saveGame();
-                        saves++;
                         break;
                     case 'S':
                         saveGame();
-                        saves++;
                         break;
-                    case 'l':
-                        if (saves != 0){
-                            loadGame();
-                        }                
+                    case 'l':                      
+                        loadGame();                                    
                         break;
-                    case 'L':
-                        if (saves != 0){
-                            loadGame();
-                        }   
+                    case 'L':                   
+                        loadGame();    
                         break;
                     default:
                         if (!gameState) {
@@ -252,36 +246,76 @@
             }
 
             function saveGame() {
-                savedScore = score;
+                /*savedScore = score;
                 savedSnakeLenght = snakeLenght;
                 savedSnakePosX = snakePosX;
                 savedSnakePosY = snakePosY;
                 savedvelocityX = velocityX;
                 savedvelocityY = velocityY;
 
-                //vymaze cele pole
-                while(savedTail.length > 0) {
+                //vymaze cele pole*/
+                /*while(savedTail.length > 0) {
                     savedTail.pop();
                 }
 
                 tail.forEach(snakePart => savedTail.push({x: snakePart.x, y: snakePart.y}));
+                //console.log(JSON.stringify([{savedTail}]));*/
+
+               fetch("https://localhost:7286/api/Hadik/PostHadikData", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        SavedScore: score,
+                        SavedSnakeLenght: snakeLenght,
+                        SavedSnakePosX: snakePosX,
+                        SavedSnakePosY: snakePosY,
+                        SavedVelocityX: velocityX,
+                        SavedVelocityY: velocityY,
+                        SavedTail: tail
+                    })
+                }).then(res => {
+                    return res.json()
+                    })
+                    //.then(data => console.log(data[0].savedTail))
+
+                saves++;                        
             }
+            
 
             function loadGame() {
-                score = savedScore;
+                /*score = savedScore;
                 snakeLenght = savedSnakeLenght;
                 snakePosX = savedSnakePosX;
                 snakePosY = savedSnakePosY;
                 velocityX = savedvelocityX;
-                velocityY = savedvelocityY;
+                velocityY = savedvelocityY;*/
 
-                gameState = 1;
+                //savedTail.forEach(snakePart => tail.push({x: snakePart.x, y: snakePart.y}));   
+
+                fetch("https://localhost:7286/api/Hadik/GetHadikData")
+                        .then(data => data.json())
+                        .then(loadedData => loadJsonData(loadedData))
+
+                gameState = 1;                
+            }
+
+            function loadJsonData(loadedData) {      
                 while(tail.length > 0) {
                     tail.pop();
                 }
-                savedTail.forEach(snakePart => tail.push({x: snakePart.x, y: snakePart.y}));     
-            }
 
+                score = loadedData[0].savedScore;
+                snakeLenght = loadedData[0].savedSnakeLenght;
+                snakePosX = loadedData[0].savedSnakePosX;
+                snakePosY = loadedData[0].savedSnakePosY;
+                velocityX = loadedData[0].savedVelocityX;
+                velocityY = loadedData[0].savedVelocityY;
+          
+                loadedData[0].savedTail.forEach(snakePart => tail.push({x: snakePart.x, y: snakePart.y}));    
+                                                  
+            }
         </script>
     </body>
 </html>

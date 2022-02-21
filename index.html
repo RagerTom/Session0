@@ -190,10 +190,14 @@
                         pauseGame();
                         break; 
                     case 's':
-                        saveGame();
+                        if (gameState == 2){
+                            saveGame();
+                        }         
                         break;
                     case 'S':
-                        saveGame();
+                        if (gameState == 2){
+                            saveGame();
+                        }   
                         break;
                     case 'l':                      
                         loadGame();                                    

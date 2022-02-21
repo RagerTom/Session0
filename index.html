@@ -246,22 +246,73 @@
             }
 
             function saveGame() {
-                /*savedScore = score;
-                savedSnakeLenght = snakeLenght;
-                savedSnakePosX = snakePosX;
-                savedSnakePosY = snakePosY;
-                savedvelocityX = velocityX;
-                savedvelocityY = velocityY;
+                postData();
+                  
+                postTail();
 
-                //vymaze cele pole*/
-                /*while(savedTail.length > 0) {
-                    savedTail.pop();
+                saves++;                        
+            }
+            
+
+            function loadGame() {
+                fetch("https://localhost:7286/api/Hadik")
+                    .then(data => data.json())
+                    .then(loadedData => loadHadikData(loadedData))
+                
+                fetch("https://localhost:7286/api/HadikParts")
+                    .then(data => data.json())
+                    .then(loadedData => loadHadikParts(loadedData))
+
+                gameState = 1;                
+            }
+
+            function loadHadikData(loadedData) {      
+                score = loadedData[0].savedScore;
+                snakeLenght = loadedData[0].savedSnakeLenght;
+                snakePosX = loadedData[0].savedSnakePosX;
+                snakePosY = loadedData[0].savedSnakePosY;
+                velocityX = loadedData[0].savedVelocityX;
+                velocityY = loadedData[0].savedVelocityY;                                                        
+            }
+
+            function loadHadikParts(loadedData){
+                while(tail.length > 0) {
+                    tail.pop();
                 }
 
-                tail.forEach(snakePart => savedTail.push({x: snakePart.x, y: snakePart.y}));
-                //console.log(JSON.stringify([{savedTail}]));*/
+                loadedData.forEach(snakePart => tail.push({x: snakePart.x, y: snakePart.y}));
 
-               fetch("https://localhost:7286/api/Hadik/PostHadikData", {
+                //console.log(JSON.stringify([{tail}]));
+            }
+
+            async function postTail(){
+                fetch('https://localhost:7286/api/HadikParts', {
+                        method: 'DELETE',
+                        })
+                        .then(res => res.json())
+
+                for (var i = 0; i < tail.length; i++){
+                    const res = await fetch("https://localhost:7286/api/HadikParts", {
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        X: tail[i].x,
+                        Y: tail[i].y
+                    })
+                });
+                const json = await res.json();
+                }
+            }
+
+            function postData(){
+                fetch('https://localhost:7286/api/Hadik', {
+                        method: 'DELETE',
+                        })
+                        .then(res => res.json())
+
+                fetch("https://localhost:7286/api/Hadik", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -273,49 +324,12 @@
                         SavedSnakePosY: snakePosY,
                         SavedVelocityX: velocityX,
                         SavedVelocityY: velocityY,
-                        SavedTail: tail
                     })
                 }).then(res => {
                     return res.json()
                     })
-                    //.then(data => console.log(data[0].savedTail))
-
-                saves++;                        
-            }
-            
-
-            function loadGame() {
-                /*score = savedScore;
-                snakeLenght = savedSnakeLenght;
-                snakePosX = savedSnakePosX;
-                snakePosY = savedSnakePosY;
-                velocityX = savedvelocityX;
-                velocityY = savedvelocityY;*/
-
-                //savedTail.forEach(snakePart => tail.push({x: snakePart.x, y: snakePart.y}));   
-
-                fetch("https://localhost:7286/api/Hadik/GetHadikData")
-                        .then(data => data.json())
-                        .then(loadedData => loadJsonData(loadedData))
-
-                gameState = 1;                
             }
 
-            function loadJsonData(loadedData) {      
-                while(tail.length > 0) {
-                    tail.pop();
-                }
-
-                score = loadedData[0].savedScore;
-                snakeLenght = loadedData[0].savedSnakeLenght;
-                snakePosX = loadedData[0].savedSnakePosX;
-                snakePosY = loadedData[0].savedSnakePosY;
-                velocityX = loadedData[0].savedVelocityX;
-                velocityY = loadedData[0].savedVelocityY;
-          
-                loadedData[0].savedTail.forEach(snakePart => tail.push({x: snakePart.x, y: snakePart.y}));    
-                                                  
-            }
         </script>
     </body>
 </html>
